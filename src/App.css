@@ -3,7 +3,7 @@
 }
 .container {
   width: 1024px;
-  margin: 10px auto;
+  margin: 0 auto;
 }
 .header{
   display: flex;
@@ -32,9 +32,27 @@
   flex-wrap: wrap;   
 }
 .user-card {
-  width: 300px;
+  width: 320px;
   border: 1px black solid;
   padding: 10px 20px;
   margin: 0 5px 10px 5px;
   background-color: #faebd7;
+}
+
+/* modal */
+.modal-background {
+  position: fixed;
+  height: 110vh;
+  width: 100vw;
+  background-color: #000;
+  opacity: 0.5;
+}
+
+.modal-container{
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform:translate(-50%, -50%);
+  width: 600px;
+  background-color: #fff;
 }

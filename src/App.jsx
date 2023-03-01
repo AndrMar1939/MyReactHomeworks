@@ -3,11 +3,12 @@ import "./App.css";
 import Header from "./Header";
 import UserCard from "./UserCard";
 import { userData } from "./userData.js";
+import Modal from "./Modal";
 
 function App() {
+
     // variables
     const usersList = userData.map((item) => item);
-
     const [users, setUsers] = useState(usersList);
 
     const [filters, setFilters] = useState({
@@ -15,8 +16,11 @@ function App() {
         ageSorting: "default",
     });
 
-    //   filter users
+    const [isShowModal, setIsShowModal] = useState(false);
+    const [modalUser, setModalUser] = useState(null);
 
+
+    //   filter users
     const filterUsers = (name, ageSorting) => {
         
         console.log(name, ageSorting)
@@ -63,24 +67,38 @@ function App() {
         setUsers(usersList);
     }
 
+    // modal
+    const handleShowModal = (user) => {
+        setIsShowModal(true);
+        setModalUser(user);
+    }
+    const handleCloseModal = () => {
+        setIsShowModal(false);
+        setModalUser(null);
+    }
+
     // render
 
     return (
-        <div className="App">
-        <div className="container">
-            <Header
-            filters={filters}
-            handleInputChange={handleInputChange}
-            handleSelectSort={handleSelectSort}
-            handleResetFilters = {handleResetFilters}
-            />
-            <div className="main">
-            {users.map((user) => (
-                <UserCard user={user} key={user._id} />
-            ))}
+                
+        <div className="App">    
+        {isShowModal && <Modal handleCloseModal={handleCloseModal} user={modalUser}/>}        
+            <div className="container">
+                <Header
+                filters={filters}
+                handleInputChange={handleInputChange}
+                handleSelectSort={handleSelectSort}
+                handleResetFilters = {handleResetFilters}
+                />
+                <div className="main">
+                {users.map((user) => (
+                    <UserCard user={user} key={user._id} handleShowModal={() => handleShowModal(user)}  
+                    />
+                ))}
+                </div>
             </div>
         </div>
-        </div>
+    
     );
 }
 
