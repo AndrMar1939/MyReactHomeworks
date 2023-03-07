@@ -9,7 +9,7 @@ import TimerListContainer from "./containers/TimerListContainer/TimerListContain
 
 function App() {   
 
-    const [[hours, minutes, seconds], setTimer] = useState([0, 0, 0]);
+    const [[hours, minutes, seconds, centiseconds], setTimer] = useState([0, 0, 0, 0]);
     const [timerStart, setTimerStart] = useState(false);
     const [pushStopButton, setPushStopButton] = useState(false);
     const [writeTimeInList, setWriteTimeInList] = useState(false);
@@ -23,15 +23,17 @@ function App() {
         let timerIdInterval = null;
 
         if (timerStart === true) {
-            timerIdInterval = setInterval(()=>{setTimer(([hours, minutes, seconds]) => {
-                    if (minutes === 59 && seconds === 59) {
-                        return[hours+1, 0, 0]
-                    } else if (seconds === 59) {
-                        return[hours, minutes+1, 0]
-                    } else if (seconds < 59) {
-                        return[hours, minutes, seconds+1] 
+            timerIdInterval = setInterval(()=>{setTimer(([hours, minutes, seconds, centiseconds]) => {
+                    if (minutes === 59 && seconds === 59 && centiseconds === 99) {
+                        return[hours+1, 0, 0, 0]
+                    } else if (seconds === 59 && centiseconds === 99) {
+                        return[hours, minutes+1, 0, 0]
+                    } else if (centiseconds === 99) {
+                        return[hours, minutes, seconds+1, 0] 
+                    } else if (centiseconds < 99) {
+                        return[hours, minutes, seconds, centiseconds+1] 
                     }
-                    return [hours, minutes, seconds]                    
+                    return [hours, minutes, seconds, centiseconds]                    
                 }
             )}, 10);  
         }
@@ -41,33 +43,14 @@ function App() {
         
     }, [timerStart]);
 
-// ______________________________________________________________________________________________
-    // writing a time in the timer list
-
-    useEffect(()=>{
-        if (writeTimeInList) {
-            console.log([hours, minutes, seconds]) 
-        } 
-    }, [writeTimeInList])
-
-
     // ______handle functions______________   
 
 
     const handleWriteTime = (event) => {
-        switch (event.target.name) {
-            case 'stop':
-                setWriteTimeInList(true)
-            break
-
-            case 'reset':
-                setWriteTimeInList(true)
-            break
-
-            default: 
-                setWriteTimeInList(false)
-            break
-        }
+        if (writeTimeInList === false && event.target.name === 'stop' || 
+            writeTimeInList === false && event.target.name === 'reset') {           
+            setWriteTimeInList(true);
+        } else { setWriteTimeInList(false)}
     }
 
 
@@ -80,11 +63,9 @@ function App() {
 
     }
 
-    const handleTimerReset = (event) => {
+    const handleTimerReset = () => {
+        setTimer([0,0,0,0])
         setTimerStart(false);
-        // handleWriteTime(event);
-        // setTimer([0,0,0])
-
     }
 
     const handleSwitchStartButton = (event) => {
@@ -110,20 +91,28 @@ function App() {
                 <TimerDial 
                     hours = {hours}
                     minutes = {minutes}
-                    seconds = {seconds}/>
+                    seconds = {seconds}
+                    centiseconds ={centiseconds}/>
                 <ButtonsContainer 
+                    hours = {hours}
+                    minutes = {minutes}
+                    seconds = {seconds}
+                    centiseconds ={centiseconds}
                     handleTimerStart={handleTimerStart}
                     handleTimerStop={handleTimerStop}
                     handleTimerReset={handleTimerReset}
                     handleSwitchStartButton={handleSwitchStartButton}
                     pushStopButton={pushStopButton}
                     handleWriteTime={handleWriteTime}
+                    writeTimeInList={writeTimeInList}
                 />
                 <TimerListContainer
-                    writeTimeInList={writeTimeInList}
                     hours = {hours}
                     minutes = {minutes}
                     seconds = {seconds}
+                    centiseconds ={centiseconds}                
+                    writeTimeInList={writeTimeInList}
+
                 />
             </Wrapper>
         </div>

@@ -7,11 +7,14 @@ export default function TimerListContainer ({
     writeTimeInList,
     ...props
 }) {   
-
-    if (writeTimeInList) {
-        // transform array in time string
-        const time = timerNumberToString(props);
+    // transform array in time string
+    const time = timerNumberToString(props);
+    
+    if (writeTimeInList && time !== '00:00:00.00') {   
+        
         timeStorage.push(time);
+        
+        localStorage.setItem('timesArray', JSON.stringify(timeStorage));
     }
     return (      
         <ol className="timer-list-container">

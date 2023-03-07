@@ -1,5 +1,6 @@
 import "./style.css";
 import Button from "../../components/Button/Button";
+import timerNumberToString from "../../components/helpers/timerNumberToString";
 
 export default function ButtonsContainer({
   handleTimerStart,
@@ -7,12 +8,17 @@ export default function ButtonsContainer({
   handleTimerReset,
   handleSwitchStartButton,
   pushStopButton,
-  handleWriteTime
+  handleWriteTime,
+  writeTimeInList,
+  ...props
 }) {   
+    // check timer value
+    const timeString = timerNumberToString(props);
+
     return (
         <div className="buttons-container">
 
-            {pushStopButton 
+            {pushStopButton && timeString !== '00:00:00.00'
                 ?   <Button
                         name="continue"
                         className={"button-continue"}
@@ -43,7 +49,7 @@ export default function ButtonsContainer({
                 onClick={(event) => {
                     handleTimerStop();
                     handleSwitchStartButton(event);
-                    handleWriteTime(event);
+                    handleWriteTime(event);                
                 }}
             >
             Stop
@@ -54,9 +60,9 @@ export default function ButtonsContainer({
                 name="reset"
                 className={"button-reset"}
                 onClick={(event) => {
-                    handleWriteTime(event);                      
+                    handleWriteTime(event);                                      
                     handleSwitchStartButton(event);       
-                    handleTimerReset(event);          
+                    setTimeout(()=>{handleTimerReset(event)}, 1)        
                 }}
             >
             Reset
