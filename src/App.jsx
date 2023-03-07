@@ -1,102 +1,131 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./App.css";
-import Header from "./Header";
-import UserCard from "./UserCard";
-import { userData } from "./userData.js";
-import Modal from "./Modal";
-
-function App() {
-
-    // variables
-    const usersList = userData.map((item) => item);
-    const [users, setUsers] = useState(usersList);
-
-    const [filters, setFilters] = useState({
-        name: "",
-        ageSorting: "default",
-    });
-
-    const [isShowModal, setIsShowModal] = useState(false);
-    const [modalUser, setModalUser] = useState(null);
+import Wrapper from "./containers/Wrapper/Wrapper";
+import TimerDial from "./components/TimerDial/TimerDial";
+import ButtonsContainer from "./containers/ButtonsContainer/ButtonsContainer";
+import TimerListContainer from "./containers/TimerListContainer/TimerListContainer";
 
 
-    //   filter users
-    const filterUsers = (name, ageSorting) => {
+
+function App() {   
+
+    const [[hours, minutes, seconds], setTimer] = useState([0, 0, 0]);
+    const [timerStart, setTimerStart] = useState(false);
+    const [pushStopButton, setPushStopButton] = useState(false);
+    const [writeTimeInList, setWriteTimeInList] = useState(false);
+
+
+    // ______________________________
+
+    // timer
+
+    useEffect(() => {        
+        let timerIdInterval = null;
+
+        if (timerStart === true) {
+            timerIdInterval = setInterval(()=>{setTimer(([hours, minutes, seconds]) => {
+                    if (minutes === 59 && seconds === 59) {
+                        return[hours+1, 0, 0]
+                    } else if (seconds === 59) {
+                        return[hours, minutes+1, 0]
+                    } else if (seconds < 59) {
+                        return[hours, minutes, seconds+1] 
+                    }
+                    return [hours, minutes, seconds]                    
+                }
+            )}, 10);  
+        }
         
-        console.log(name, ageSorting)
+        return () => {clearInterval(timerIdInterval)}     
+      
+        
+    }, [timerStart]);
 
-        if (ageSorting === "asc") {
-        return usersList
-            .sort((a, b) => a.age - b.age)
-            .filter((user) =>
-                user.name.toLowerCase().includes(name.toLowerCase())
-            );
+// ______________________________________________________________________________________________
+    // writing a time in the timer list
+
+    useEffect(()=>{
+        if (writeTimeInList) {
+            console.log([hours, minutes, seconds]) 
+        } 
+    }, [writeTimeInList])
+
+
+    // ______handle functions______________   
+
+
+    const handleWriteTime = (event) => {
+        switch (event.target.name) {
+            case 'stop':
+                setWriteTimeInList(true)
+            break
+
+            case 'reset':
+                setWriteTimeInList(true)
+            break
+
+            default: 
+                setWriteTimeInList(false)
+            break
         }
-        if (ageSorting === "desc") {
-        return usersList
-            .sort((a, b) => b.age - a.age)
-            .filter((user) =>
-                user.name.toLowerCase().includes(name.toLowerCase())
-            );
+    }
+
+
+    const handleTimerStart = () => {
+        setTimerStart(true);
+    }
+
+    const handleTimerStop = () => {
+        setTimerStart(false);
+
+    }
+
+    const handleTimerReset = (event) => {
+        setTimerStart(false);
+        // handleWriteTime(event);
+        // setTimer([0,0,0])
+
+    }
+
+    const handleSwitchStartButton = (event) => {
+        switch (event.target.name) {
+            case 'stop':
+                setPushStopButton(true)
+            break
+            default: 
+                setPushStopButton(false)
+            break
         }
-        if (ageSorting === "default") {
-        return usersList
-            .sort((a, b) => a.index - b.index)
-            .filter((user) =>
-                user.name.toLowerCase().includes(name.toLowerCase())
-            );
-        }
-    }; 
+        
+    }
 
-    // text input handle
-    const handleInputChange = (event) => {
-        setFilters({ name: event.target.value, ageSorting: filters.ageSorting });
-        setUsers(filterUsers(event.target.value, filters.ageSorting));
-    };
 
-    // text input handle
 
-    const handleSelectSort = (event) => {
-        setFilters({ name: filters.name, ageSorting: event.target.value });        
-        setUsers(filterUsers(filters.name, event.target.value));
-    };
+    // _______________________
     
-    // reset button
-    const handleResetFilters = () => {
-        setFilters({ name: '', ageSorting: "default"});
-        setUsers(usersList);
-    }
-
-    // modal
-    const handleShowModal = (user) => {
-        setIsShowModal(true);
-        setModalUser(user);
-    }
-    const handleCloseModal = () => {
-        setIsShowModal(false);
-        setModalUser(null);
-    }
-
-    // render
-
     return (
                 
         <div className="App">    
-        {isShowModal && <Modal handleCloseModal={handleCloseModal} user={modalUser}/>}        
-            <div className="container">
-                <Header
-                filters={filters}
-                handleInputChange={handleInputChange}
-                handleSelectSort={handleSelectSort}
-                handleResetFilters = {handleResetFilters}
+            <Wrapper>
+                <TimerDial 
+                    hours = {hours}
+                    minutes = {minutes}
+                    seconds = {seconds}/>
+                <ButtonsContainer 
+                    handleTimerStart={handleTimerStart}
+                    handleTimerStop={handleTimerStop}
+                    handleTimerReset={handleTimerReset}
+                    handleSwitchStartButton={handleSwitchStartButton}
+                    pushStopButton={pushStopButton}
+                    handleWriteTime={handleWriteTime}
                 />
-                <div className="main">
-                {users.map((user) => (
-                    <UserCard user={user} key={user._id} handleShowModal={() => handleShowModal(user)}  
-                    />
-                ))}
-                </div>
-            </div>
+                <TimerListContainer
+                    writeTimeInList={writeTimeInList}
+                    hours = {hours}
+                    minutes = {minutes}
+                    seconds = {seconds}
+                />
+            </Wrapper>
         </div>
     
     );
