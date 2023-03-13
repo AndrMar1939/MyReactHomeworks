@@ -1,121 +1,75 @@
-import React, { useState, useEffect } from "react";
+import React, { useReducer } from "react";
 import "./App.css";
-import Wrapper from "./containers/Wrapper/Wrapper";
-import TimerDial from "./components/TimerDial/TimerDial";
-import ButtonsContainer from "./containers/ButtonsContainer/ButtonsContainer";
-import TimerListContainer from "./containers/TimerListContainer/TimerListContainer";
+import InputContainer from "./containers/InputContainer/InputContainer";
+
+import StepOne from "./components/StepOne/StepOne";
+import StepTwo from "./components/StepTwo/StepTwo";
+import StepThree from "./components/StepThree/StepThree";
+import StepFour from "./components/StepFour/StepFour";
+import StepFive from "./components/StepFive/StepFive";
+// default img avatar
+import defaultAvatar from "./components/ImgBase64/DefaultAvatar";
 
 
-
-function App() {   
-
-    const [[hours, minutes, seconds, centiseconds], setTimer] = useState([0, 0, 0, 0]);
-    const [timerStart, setTimerStart] = useState(false);
-    const [pushStopButton, setPushStopButton] = useState(false);
-    const [writeTimeInList, setWriteTimeInList] = useState(false);
+// create variables
 
 
-    // ______________________________
+export const AppContext = React.createContext(null);
 
-    // timer
+const initialState = {
+    userName: '',
+    userSurname: '',
+    email: '',
+    city: '',
+    streetName: '',
+    buildingNumber: '',
+    password: '',
+    confirmPassword: '',
+    imgSrc: defaultAvatar,
+    formPages: 'stepOne',
+};
 
-    useEffect(() => {        
-        let timerIdInterval = null;
+// ['stepOne', 'stepTwo', 'stepThree', 'stepFour', 'stepFive']
 
-        if (timerStart === true) {
-            timerIdInterval = setInterval(()=>{setTimer(([hours, minutes, seconds, centiseconds]) => {
-                    if (minutes === 59 && seconds === 59 && centiseconds === 99) {
-                        return[hours+1, 0, 0, 0]
-                    } else if (seconds === 59 && centiseconds === 99) {
-                        return[hours, minutes+1, 0, 0]
-                    } else if (centiseconds === 99) {
-                        return[hours, minutes, seconds+1, 0] 
-                    } else if (centiseconds < 99) {
-                        return[hours, minutes, seconds, centiseconds+1] 
-                    }
-                    return [hours, minutes, seconds, centiseconds]                    
-                }
-            )}, 10);  
-        }
-        
-        return () => {clearInterval(timerIdInterval)}     
-      
-        
-    }, [timerStart]);
+const reducer = (state, action) => {
+    switch (action.type) {
+        case 'DATA-INPUT':
+            return {
+                ...state,
+                ...action.payload
+            }
 
-    // ______handle functions______________   
-
-
-    const handleWriteTime = (event) => {
-        if (writeTimeInList === false && event.target.name === 'stop' || 
-            writeTimeInList === false && event.target.name === 'reset') {           
-            setWriteTimeInList(true);
-        } else { setWriteTimeInList(false)}
+        case 'STEP-BTN':
+            return {
+                ...state,
+                ...action.payload
+            }
+            
+    
+        default:
+            return state;
     }
+};
 
 
-    const handleTimerStart = () => {
-        setTimerStart(true);
-    }
 
-    const handleTimerStop = () => {
-        setTimerStart(false);
-
-    }
-
-    const handleTimerReset = () => {
-        setTimer([0,0,0,0])
-        setTimerStart(false);
-    }
-
-    const handleSwitchStartButton = (event) => {
-        switch (event.target.name) {
-            case 'stop':
-                setPushStopButton(true)
-            break
-            default: 
-                setPushStopButton(false)
-            break
-        }
-        
-    }
-
-
+function App() {  
+    const [state, dispatch] = useReducer(reducer, initialState);
 
     // _______________________
     
     return (
-                
-        <div className="App">    
-            <Wrapper>
-                <TimerDial 
-                    hours = {hours}
-                    minutes = {minutes}
-                    seconds = {seconds}
-                    centiseconds ={centiseconds}/>
-                <ButtonsContainer 
-                    hours = {hours}
-                    minutes = {minutes}
-                    seconds = {seconds}
-                    centiseconds ={centiseconds}
-                    handleTimerStart={handleTimerStart}
-                    handleTimerStop={handleTimerStop}
-                    handleTimerReset={handleTimerReset}
-                    handleSwitchStartButton={handleSwitchStartButton}
-                    pushStopButton={pushStopButton}
-                    handleWriteTime={handleWriteTime}
-                    writeTimeInList={writeTimeInList}
-                />
-                <TimerListContainer
-                    hours = {hours}
-                    minutes = {minutes}
-                    seconds = {seconds}
-                    centiseconds ={centiseconds}                
-                    writeTimeInList={writeTimeInList}
-
-                />
-            </Wrapper>
-        </div>
+        <AppContext.Provider value={{ state, dispatch }}>
+            <div className="App">    
+                <InputContainer>
+                    {state.formPages === 'stepOne' && <StepOne/>}
+                    {state.formPages === 'stepTwo' && <StepTwo/>}
+                    {state.formPages === 'stepThree' && <StepThree/>}
+                    {state.formPages === 'stepFour' && <StepFour/>}
+                    {state.formPages === 'stepFive' && <StepFive/>}
+                </InputContainer>
+            </div>
+        </AppContext.Provider>    
     
     );
 }

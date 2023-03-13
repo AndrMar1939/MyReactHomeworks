@@ -1,0 +1,17 @@
+.input-box{
+    padding: 10px 0;
+}
+.input-area{
+    width: 300px;
+    height: 40px;
+    font-size: 18px;
+    padding: 0 10px;
+}
+
+.input-label{
+    display: block;
+    font-size: 18px;
+    line-height: 1.25;
+    margin-bottom: 10px;
+    font-weight: 600;
+}
