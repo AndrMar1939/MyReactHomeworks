@@ -1,27 +1,15 @@
 .button-general {
     height: 40px;
-    min-width: 120px;
+    min-width: 150px;
     border-radius: 10px;
-    color: #fff;
+    border: 1px #000 solid;    
     font-size: 20px;
-    opacity: 0.8;
-    border: none;
+    background-color: #fff;
+    margin: 10px;
 }
 .button-general:hover {
     opacity: 0.6;
 }
 .button-general:active {
     opacity: 0.4;
-}
-.button-start {
-    background-color: #008000;
-}
-.button-stop {
-    background-color: #ff0000;
-}
-.button-reset {
-    background-color: #ff9100;
-}
-.button-continue {
-    background-color: #ff00dd;
 }

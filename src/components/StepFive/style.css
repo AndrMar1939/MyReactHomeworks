@@ -1,0 +1,17 @@
+h1{
+    text-align: center;
+}
+h3{
+    margin: 10px 0;
+}
+
+.list-info{
+    list-style: none;
+    padding: 6px;
+    margin: 0;
+}
+
+li{
+    margin-bottom: 6px;
+}
+
