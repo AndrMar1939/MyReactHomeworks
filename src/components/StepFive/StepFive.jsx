@@ -7,7 +7,7 @@ import './style.css';
 
 export default function StepFive() {
     const {state} = useContext(AppContext);
-    
+    console.log(state)
     return (
         <>
             <h1>Thank you for the registration</h1>
